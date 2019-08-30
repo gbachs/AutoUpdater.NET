@@ -59,24 +59,24 @@ namespace AutoUpdaterDotNET
                     break;
             }
 
-            if (ieValue != 0)
+            if (ieValue == 0)
+                return;
+            
+            try
             {
-                try
+                using (var registryKey =
+                    Registry.CurrentUser.OpenSubKey(
+                        @"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION",
+                        true))
                 {
-                    using (RegistryKey registryKey =
-                        Registry.CurrentUser.OpenSubKey(
-                            @"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION",
-                            true))
-                    {
-                        registryKey?.SetValue(Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName),
-                            ieValue,
-                            RegistryValueKind.DWord);
-                    }
+                    registryKey?.SetValue(Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName),
+                        ieValue,
+                        RegistryValueKind.DWord);
                 }
-                catch (Exception)
-                {
-                    // ignored
-                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
